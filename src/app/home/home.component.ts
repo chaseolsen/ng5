@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { trigger, style, transition, animate, keyframes, query, stagger } from '@angular/animations';
 import { DataService } from '../data.service';
+import { Http, Response, RequestOptions, Headers, URLSearchParams } from '@angular/http';
 
 @Component({
   selector: 'app-home',
@@ -31,12 +32,14 @@ import { DataService } from '../data.service';
 })
 export class HomeComponent implements OnInit {
 
+  apiRoot: string = "http://localhost:8080/api";
+
   itemCount: number;
   btnText: string = 'Add an item';
   goalText: string = 'My first life goal';
   goals = [];
 
-  constructor(private _data: DataService) { }
+  constructor(private _data: DataService, private http: Http) { }
 
   ngOnInit() {
     //fetch data from DataService
@@ -55,6 +58,21 @@ export class HomeComponent implements OnInit {
   removeItem(i) {
     this.goals.splice(i, 1);
     this._data.changeGoal(this.goals);
+  }
+
+  doGET(){
+    console.log('GET IT');
+    let url = `${this.apiRoot}/get`;
+    let search = new URLSearchParams();
+    search.set('foo', 'moo');
+    this.http.get(url, {search: search}).subscribe(res => console.log(res.json()));
+  }
+
+  doPOST(){
+    console.log('POST IT');
+    let url = `${this.apiRoot}/authenticate`;
+
+    this.http.post(url, {name:"Chase", password:"password"}).subscribe(res => console.log(res.json()));
   }
 
 }
